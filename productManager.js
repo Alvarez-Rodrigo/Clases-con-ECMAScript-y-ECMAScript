@@ -53,7 +53,36 @@ class ProductManager{
     }
 }
 
+const productManager = new ProductManager()
 
+console.log(productManager.getProduct())
+
+productManager.addProducts(
+    'Producto1',
+    'Descripcion del producto',
+    20,
+    'imagen1.png',
+    '01',
+    10
+)
+
+productManager.addProducts(
+    'Producto2',
+    'Descripcion del producto2.0',
+    30,
+    'imagen2.png',
+    '02',
+    60
+)
+
+productManager.addProducts(
+    'Producto3',
+    'Descripcion del producto3.0',
+    80,
+    'imagen3.png',
+    '03',
+    3
+)
 
 
 
