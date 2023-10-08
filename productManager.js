@@ -2,53 +2,92 @@
 class ProductManager{
 
     #products
-    #error
-    constructor(){
+    #path
+    #format
+    constructor(path){
         this.#products = []
-        this.#error = undefined
+        this.#format = 'utf-8'
+        this.#path = path
     }
 
-    #generateId = () =>(this.#products.length === 0) ? 1 : this.#products[this.#products.length -1].id +1
+    #generateId = async () => {
+        return this.#products.length === 0 ? 1 : this.#products[this.#products.length -1].id +1
+    }
 
     //Metodo para validar campos y sabes si el producto existe.
 
-    #validateProduct = (title, description, price, thumbnail, code, stock) => {
-        if(!title || !description || !price || !thumbnail || !code || !stock){ this.#error = `Falta completar campos`}
-        else{
-            const existeProduct = this.#products.find((item) =>item.code === code)
-    
-            if(existeProduct){
-                this.#error = `El codigo del producto ya existe.`
-            }else{
-                this.#error = undefined
+    #validateProduct = async(product) =>{
+        for (const [key, value] of Object.entries(product)){
+            if(!value){
+                console.log(`El producto ${product.title} tiene el campo ${key} sin completar.`)
+                return false
             }
         }
-    } 
+        const existingProduct = await this.#products.find(p => p.code === product.code)
+        if(existingProduct !== undefined){
+            console.log(`Ya existe el producto con el codigo ${product.code}`)
+            return false
+        }
+        return true
+    }
 
 //Agrega productos.
 
-    addProducts = (title, description, price, thumbnail, code, stock) => {this.#validateProduct(title, description, price, thumbnail, code, stock)
+    addProducts = async(title, description, price, thumbnail, code, stock) => {
+        const newProduct = {id : await this.#generateId(), title, description, price, thumbnail, code, stock}
 
-        if(this.#error === undefined){
-        this.#products.push({id: this.#generateId(), title,description, price, thumbnail, code, stock})
-        }else{
-            console.log(this.#error)
+        if(this.#validateProduct(newProduct)){
+            this.#products.push(newProduct)
+            await FileSystem.promises.writeFile(this.#path, JSON.stringify(this.#products, null, '\t'))
+            return newProduct
         }
     }
 
     //Muestro el array
 
-    getProduct = () => this.#products
+    getProduct = async() =>{
+        try{
+            return JSON.parse(await FileSystem.promises.readFile(this.#path, this.#format))
+        }catch (err){
+            console.log('error: no se encuentra archivo')
+            return[]
+        }
+    } 
 
     //Busco Id igual
 
-    getProductById = (id) => {
-        const productId = this.#products.find((item) => item.id === id)
+    getProductById = async(id) =>{
+        const product = this.#products.find(p => p.id === id)
+        return product || `No se encuentra producto el ID ${id}`
+    }
 
-        if(!productId){
-            return `Producto no encontrado`
-        }else {
-            return productId
+    upDateProducto =async(id, update) =>{
+        const isValid = await this.#products.findIndex(p => p.id === id)
+        if(index !== -1){
+            if(!isValid){
+                return console.log('Error de actualizacion: Actualizacion invalida')
+            }
+            this.#products[index] = {...this.#products[index], ...update}
+            await FileSystem.promises.writeFile(this.#path, JSON.stringify(this.#products, null, '\t'))
+            return console.log('Producto actualizado', this.#products[index])
+        }
+        return console.log('Error: Producto no encontrado')
+        
+    }
+
+    deleteProduct = async(id) =>{
+        try{
+            const product = this.#products.find(p => p.id === id)
+            if(!product){
+                return `No existe el producto con ID ${id}`
+            }
+            const filterProductos = this.#products.filter(p => p.id !==id)
+            if(this.#products.length !== filterProductos.length){
+                await FileSystem.promises.writeFile(this.#path, JSON.stringify(filterProductos, null, '\t'))
+                return `${product.title}: Producto eliminado`
+            }
+        }catch(err){
+            console.log(err)
         }
     }
 }
