@@ -1,0 +1,47 @@
+[
+    {
+      "id": 1,
+      "title": "cafe",
+      "description": " Cafe",
+      "price": 1600,
+      "thumbnail": "https://imagen_cafe.jpg",
+      "code": "ca1",
+      "stock": 11
+    },
+    {
+      "id": 2,
+      "title": "Dulce de Leche",
+      "description": "Dulce.",
+      "price": 875,
+      "thumbnail": "https://imagen_mermelada.jpg",
+      "code": "mer1",
+      "stock": 11
+    },
+    {
+      "id": 3,
+      "title": "Leche",
+      "description": "Leche",
+      "price": 350,
+      "thumbnail": "https://imagen_leche.jpg",
+      "code": "lec1",
+      "stock": 14
+    },
+    {
+      "id": 4,
+      "title": "Galletas",
+      "description": "Galletas.",
+      "price": 150,
+      "thumbnail": "https://imagen_galletas_desayuno.jpg",
+      "code": "ga1",
+      "stock": 12
+    },
+    {
+      "id": 5,
+      "title": "Jabón",
+      "description": "Jabón.",
+      "price": 850,
+      "thumbnail": "https://imagen2.jpg",
+      "code": "ja2",
+      "stock": 12
+    }
+  ]
